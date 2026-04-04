@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.DS_Store
+.cache
+LLM/qwen3.5-9b/
+.env
+Docker/.env.docker
+
+# Jekyll
+docs/_site/
+docs/.jekyll-cache/
+docs/.jekyll-metadata
+docs/Gemfile.lock

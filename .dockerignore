@@ -1,0 +1,25 @@
+.git
+.gitignore
+.venv
+.DS_Store
+.cache
+__pycache__
+*.pyc
+
+# LLM 模型权重（通过 volume 挂载）
+LLM/qwen3.5-9b/
+LLM/qwen3.5-9b-lora/
+LLM/*.json
+LLM/train_data.json
+
+# RAG 数据文件（通过 volume 挂载）
+RAG/chunks_json/
+RAG/origin_doc/
+
+# Docker 自身
+Docker/
+
+# 其他
+README.md
+*.md
+!Skills/*.md

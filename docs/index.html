@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LegalAgent 技术博客</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
+<style>
+:root {
+  --primary: #4A90D9;
+  --primary-dark: #2E6EB5;
+  --bg: #F0F5FA;
+  --card-bg: #FFFFFF;
+  --text: #2C3E50;
+  --text-light: #5D6D7E;
+  --border: #D6E4F0;
+  --code-bg: #F5F8FB;
+  --sidebar-width: 260px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: var(--sidebar-width); height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border);
+  overflow-y: auto; z-index: 100;
+  padding: 20px 0;
+}
+.sidebar-header { padding: 0 16px 16px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+.sidebar-header h1 { font-size: 15px; color: var(--primary-dark); font-weight: 700; }
+.sidebar-header p { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.sidebar-nav { list-style: none; }
+.sidebar-nav .nav-section {
+  padding: 6px 16px; font-size: 14px; font-weight: 600;
+  color: var(--text); display: block; text-decoration: none;
+  border-left: 3px solid transparent;
+}
+.sidebar-nav .nav-section:hover, .sidebar-nav .nav-section.active {
+  color: var(--primary); border-left-color: var(--primary);
+}
+.sidebar-nav .nav-sub {
+  padding: 4px 16px 4px 32px; font-size: 13px;
+  color: var(--text-light); display: block; text-decoration: none;
+  border-left: 3px solid transparent;
+}
+.sidebar-nav .nav-sub:hover, .sidebar-nav .nav-sub.active {
+  color: var(--primary); border-left-color: var(--primary);
+}
+
+/* Main */
+.main { margin-left: var(--sidebar-width); padding: 0 36px 60px; max-width: 880px; }
+
+/* Hero */
+.hero { padding: 40px 0 24px; }
+.hero h1 { font-size: 28px; color: var(--primary-dark); font-weight: 700; margin-bottom: 4px; }
+.hero .subtitle { font-size: 16px; color: var(--text-light); margin-bottom: 24px; }
+.arch-pre {
+  background: var(--card-bg); border: 1px solid var(--border);
+  padding: 16px; overflow-x: auto; margin-bottom: 16px;
+}
+.arch-pre pre {
+  font-family: "Menlo", "Courier New", monospace;
+  font-size: 12px; line-height: 1.4; margin: 0; white-space: pre;
+}
+
+/* Section headers */
+.section-h2 {
+  font-size: 22px; font-weight: 700; color: var(--primary-dark);
+  padding: 40px 0 6px; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; user-select: none;
+}
+.section-h2 .chv { font-size: 12px; color: var(--primary); transition: transform 0.2s; }
+.section-h2.collapsed .chv { transform: rotate(-90deg); }
+
+.section-h3 {
+  font-size: 17px; font-weight: 600; color: var(--text);
+  margin: 20px 0 8px; padding: 6px 0;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  user-select: none; border-bottom: 1px solid var(--border);
+}
+.section-h3 .chv { font-size: 10px; color: var(--text-light); transition: transform 0.2s; }
+.section-h3.collapsed .chv { transform: rotate(-90deg); }
+
+/* Collapsible */
+.collapsible-content { overflow: hidden; }
+.collapsible-content.collapsed { display: none; }
+
+/* Resizable module */
+.module {
+  resize: vertical;
+  overflow-y: auto;
+  min-height: 80px;
+  border-bottom: 2px dashed var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+}
+.module::-webkit-resizer { background: var(--border); }
+
+/* Card */
+.card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  padding: 20px; margin-bottom: 16px;
+}
+
+/* Typography */
+p { margin: 10px 0; }
+ul, ol { margin: 10px 0; padding-left: 20px; }
+li { margin: 4px 0; }
+
+/* Tables */
+.table-wrapper { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th {
+  background: rgba(74,144,217,0.08); color: var(--primary-dark);
+  font-weight: 600; padding: 8px 12px; text-align: left; border: 1px solid var(--border);
+}
+tbody td { padding: 7px 12px; border: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: var(--bg); }
+
+/* Code */
+pre { margin: 12px 0; overflow-x: auto; }
+pre code {
+  display: block; padding: 12px 16px;
+  background: var(--code-bg); border: 1px solid var(--border);
+  font-family: "Menlo", "Courier New", monospace; font-size: 13px; line-height: 1.5;
+}
+code {
+  font-family: "Menlo", "Courier New", monospace; font-size: 0.9em;
+  background: var(--code-bg); padding: 1px 4px; color: var(--primary-dark);
+}
+pre code code { padding: 0; background: none; }
+
+/* Section divider */
+.section-divider { border: none; border-top: 1px solid var(--border); margin: 32px 0 0; }
+
+/* Back to top */
+.back-to-top {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 36px; height: 36px; background: var(--primary); color: #fff;
+  border: none; border-radius: 4px; font-size: 18px; cursor: pointer;
+  display: none; align-items: center; justify-content: center; z-index: 200;
+}
+.back-to-top.visible { display: flex; }
+
+/* Hamburger */
+.hamburger {
+  display: none; position: fixed; top: 10px; left: 10px; z-index: 300;
+  background: var(--card-bg); border: 1px solid var(--border);
+  padding: 6px 8px; cursor: pointer;
+}
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--text); margin: 4px 0; }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 90; }
+.overlay.show { display: block; }
+
+@media (max-width: 860px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.2s; }
+  .sidebar.open { transform: translateX(0); }
+  .hamburger { display: block; }
+  .main { margin-left: 0; padding: 48px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<button class="hamburger" id="hamburger" aria-label="菜单"><span></span><span></span><span></span></button>
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1>LegalAgent 技术博客</h1>
+    <p>法律智能助手技术记录</p>
+  </div>
+  <nav>
+    <ul class="sidebar-nav">
+      <li><a class="nav-section" href="#overview">项目概览</a></li>
+      <li><a class="nav-section" href="#agent">一、Agent 架构</a></li>
+      <li><a class="nav-sub" href="#agent-arch">选型思路</a></li>
+      <li><a class="nav-sub" href="#agent-graph">图结构与路由</a></li>
+      <li><a class="nav-sub" href="#agent-pitfall">踩坑与解决</a></li>
+      <li><a class="nav-section" href="#rag">二、RAG 检索</a></li>
+      <li><a class="nav-sub" href="#rag-pipeline">管道设计</a></li>
+      <li><a class="nav-sub" href="#rag-chunk">分块与实体提取</a></li>
+      <li><a class="nav-sub" href="#rag-dual">召回与精排</a></li>
+      <li><a class="nav-section" href="#llm">三、LLM 微调</a></li>
+      <li><a class="nav-sub" href="#llm-why">选型与动机</a></li>
+      <li><a class="nav-sub" href="#llm-train">训练细节</a></li>
+      <li><a class="nav-sub" href="#llm-vllm">vLLM 部署</a></li>
+      <li><a class="nav-section" href="#eng">四、工程化</a></li>
+      <li><a class="nav-sub" href="#eng-memory">记忆与压缩</a></li>
+      <li><a class="nav-sub" href="#eng-deploy">API 与部署</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<div class="main">
+
+  <!-- Hero -->
+  <section id="overview">
+    <div class="hero">
+      <h1>LegalAgent</h1>
+      <p class="subtitle">基于 LangGraph 的多智能体法律咨询系统</p>
+      <div class="arch-pre">
+<pre>                 ┌─────────────────┐
+                 │   Chat UI :8009  │
+                 └────────┬────────┘
+                          │ SSE
+                 ┌────────▼────────┐
+                 │ Agent API :8008  │
+                 │   (LangGraph)    │
+                 └──┬─────┬─────┬──┘
+                    │     │     │
+       ┌────────────┘     │     └────────────┐
+       ▼                  ▼                   ▼
+┌─────────────┐  ┌──────────────┐   ┌──────────────┐
+│  PostgreSQL  │  │  vLLM :8888  │   │  Tavily API  │
+│  + pgvector  │  │ Qwen3.5-9B   │   │  (联网搜索)   │
+└─────────────┘  └──────────────┘   └──────────────┘</pre>
+      </div>
+      <p>技术栈：LangGraph / Qwen3.5-9B + LoRA / vLLM / PostgreSQL + pgvector / jieba BM25 + BGE + Reranker / FastAPI SSE / Docker Compose</p>
+      <img src="images/UI.png" alt="聊天界面" style="max-width:100%; border:1px solid #D6E4F0; margin:12px 0;">
+      <img src="images/UI_1.png" alt="聊天界面" style="max-width:100%; border:1px solid #D6E4F0; margin:12px 0;">
+    </div>
+  </section>
+
+  <!-- ========== 一、Agent ========== -->
+  <hr class="section-divider">
+  <h2 class="section-h2" id="agent" data-collapse="agent-content">
+    <span class="chv">&#9660;</span> 一、Agent 架构设计
+  </h2>
+  <div class="collapsible-content module" id="agent-content">
+
+    <h3 class="section-h3" id="agent-arch" data-collapse="agent-arch-content">
+      <span class="chv">&#9660;</span> 选型思路
+    </h3>
+    <div class="collapsible-content" id="agent-arch-content">
+      <div class="card">
+        <p>想做的是一个<strong>可追溯、有记忆、能联网</strong>的法律助手——模型不确定时去查法条，查到了引用，查不到就说查不到。市面上方案要么没知识库（编法条）、要么没记忆（每次重述背景）、要么不可控。</p>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>方案</th><th>优势</th><th>问题</th></tr></thead>
+            <tbody>
+              <tr><td>LangChain Agent</td><td>简单快速</td><td>单链执行，无法暂停/恢复</td></tr>
+              <tr><td>AutoGen</td><td>多 Agent 对话</td><td>太重，对话不可控</td></tr>
+              <tr><td>CrewAI</td><td>角色分工</td><td>自由度低，定制难</td></tr>
+              <tr><td><strong>LangGraph</strong></td><td>状态机+图结构，完全可控</td><td>学习成本高</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>选 LangGraph 的核心原因：<strong>interrupt/resume</strong> 天然支持多轮对话、<strong>checkpoint</strong> 持久化到 PostgreSQL、<strong>store</strong> 实现跨会话长期记忆、路由完全由代码控制不靠 LLM 猜。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="agent-graph" data-collapse="agent-graph-content">
+      <span class="chv">&#9660;</span> 图结构与路由
+    </h3>
+    <div class="collapsible-content" id="agent-graph-content">
+      <div class="card">
+        <div class="arch-pre">
+<pre>START ──► manager ──► route
+             ▲          ├─► retriever ──► manager    (法律检索)
+             │          ├─► memory    ──► manager    (记忆提取)
+             │          ├─► tavily    ──► manager    (联网搜索)
+             │          ├─► short_mem ──► user_input (压缩历史)
+             │          └─► user_input              (等待输入)
+             └──────────────────┘</pre>
+        </div>
+        <p><strong>Manager-Worker 模式</strong>：manager 是唯一面向用户的节点，负责决策；worker 节点只做执行，把结果返回给 manager。LLM 只负责"决定调什么"，具体怎么调由节点代码处理。</p>
+<pre><code class="language-python">def route_after_manager(state):
+    last = state["messages"][-1]
+    if isinstance(last, AIMessage) and last.tool_calls:
+        name = last.tool_calls[0]["name"]
+        if name == "search_legal_docs": return "retriever"
+        if name == "extract_memory":    return "memory"
+        if name == "tavily_search":     return "tavily"
+    if _count_user_turns(state["messages"]) &gt; 8:
+        if _find_compress_boundary(state["messages"]) &gt; 0:
+            return "short_mem"
+    return "user_input"</code></pre>
+        <p>有 tool_call 就执行，没有就等用户输入。中间插了压缩检查——超 8 轮自动压缩。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="agent-pitfall" data-collapse="agent-pitfall-content">
+      <span class="chv">&#9660;</span> 踩坑与解决
+    </h3>
+    <div class="collapsible-content" id="agent-pitfall-content">
+      <div class="card">
+        <p><strong>parallel_tool_calls</strong> &mdash; 没加 <code>parallel_tool_calls=False</code>，LLM 偶尔同时调多个工具，路由只取 <code>[0]</code> 后面的丢了。法律场景单工具调用更合理——先查法条再决定后续。</p>
+        <p><strong>System Prompt 膨胀</strong> &mdash; 提示词 + Skills + 摘要 + 记忆 + 检索结果，3000+ token，小模型质量下降。解决：检索结果按需注入、记忆按优先级排序 top 50、超 8 轮自动压缩。</p>
+        <p><strong>interrupt/resume 状态恢复</strong> &mdash; 恢复时需区分新会话还是中断恢复。检查 <code>graph_state.next</code> 是否非空——非空说明图在某节点暂停，用 <code>Command(resume=...)</code>；否则走初始状态注入。</p>
+        <p><strong>流式输出过滤</strong> &mdash; <code>astream_events</code> 输出所有节点事件（包括 memory 节点提取记忆的 token）。通过 <code>event.metadata.langgraph_node</code> 过滤只取 manager 的 token。</p>
+        <p><strong>工具 Schema 的 description</strong> &mdash; 必须写清使用条件（"当用户询问具体法律条文时"），否则 LLM 过度调用。同时在 Skills/ 维护 Markdown 使用指南，运行时注入 prompt，修改策略不用改代码。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 二、RAG ========== -->
+  <hr class="section-divider">
+  <h2 class="section-h2" id="rag" data-collapse="rag-content">
+    <span class="chv">&#9660;</span> 二、RAG 检索管道
+  </h2>
+  <div class="collapsible-content module" id="rag-content">
+
+    <h3 class="section-h3" id="rag-pipeline" data-collapse="rag-pipeline-content">
+      <span class="chv">&#9660;</span> 管道设计
+    </h3>
+    <div class="collapsible-content" id="rag-pipeline-content">
+      <div class="card">
+        <p>法律 RAG 的难点是<strong>精度</strong>。用户问"刑法第二百六十四条"，返回民法典的内容比不检索还糟。挑战：中文数字、层级结构（编&rarr;章&rarr;节&rarr;条）、同名条款、长尾查询。</p>
+        <div class="arch-pre">
+<pre>Query → 实体提取(元信息过滤) → BM25 + Vector 双路召回
+      → RRF 融合排序 → Cross-Encoder Rerank → Top-K</pre>
+        </div>
+        <p>单一方法都有短板：BM25 擅长精确关键词但不懂语义，向量检索擅长语义但精确匹配差。策略是 <strong>BM25 + 向量负责召回率，Rerank 负责精确率</strong>，RRF 在中间做衔接。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="rag-chunk" data-collapse="rag-chunk-content">
+      <span class="chv">&#9660;</span> 分块与实体提取
+    </h3>
+    <div class="collapsible-content" id="rag-chunk-content">
+      <div class="card">
+        <p><strong>踩坑：按固定长度分块</strong> &mdash; 用 <code>RecursiveCharacterTextSplitter</code> 按 500 字切割，"第二百六十四条"的内容被切成两半，信息不完整。</p>
+        <p><strong>解决：按法律结构分块</strong> &mdash; 法律文本天然分割点是"第X条"。写了专门的分块器：条文类以"第X条"分界，修正案以修正项分界，其他文本按句子边界不超 900 字。每个 chunk 携带元数据（法律名称、条款号、层级路径）。</p>
+        <p><strong>踩坑：中文数字</strong> &mdash; "第二百六十四条"需转成 264 做精确过滤。edge case 是"十五"里"十"前面没数字，需默认为 1。</p>
+        <p><strong>踩坑：过滤太严导致零结果</strong> &mdash; 用户说"刑法"但 chunk 存的是全称"中华人民共和国刑法"，匹配不上就零结果。解决：简称&rarr;全称映射 + 零结果时自动移除过滤器重试。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="rag-dual" data-collapse="rag-dual-content">
+      <span class="chv">&#9660;</span> 召回与精排
+    </h3>
+    <div class="collapsible-content" id="rag-dual-content">
+      <div class="card">
+        <p><strong>BM25</strong>：选 <code>jieba.lcut_for_search</code>（搜索模式对长词进一步细分，提高召回）。</p>
+        <p><strong>向量</strong>：选 BGE-large-zh-v1.5（专为中文优化），向量库选 pgvector——PostgreSQL 已经存 checkpoint 和记忆了，<strong>复用同一实例减少运维</strong>。</p>
+        <p><strong>RRF 融合</strong>：两路都排在前面的文档得分更高，k=60 平滑排名差异。</p>
+        <p><strong>Rerank</strong>：Cross-Encoder（BGE-reranker-v2-m3）精度远高于 Bi-Encoder，但太慢——<strong>只能对 RRF 后 30 条做精排</strong>。实体过滤提升最明显：用户提到法律名称+条款号时，先缩小范围再检索。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 三、LLM ========== -->
+  <hr class="section-divider">
+  <h2 class="section-h2" id="llm" data-collapse="llm-content">
+    <span class="chv">&#9660;</span> 三、LLM 微调与部署
+  </h2>
+  <div class="collapsible-content module" id="llm-content">
+    <img src="images/9B.png" alt="9B 训练" style="max-width:100%; border:1px solid #D6E4F0; margin:12px 0;">
+    <img src="images/4bit-9B.png" alt="4bit 量化 9B" style="max-width:100%; border:1px solid #D6E4F0; margin:12px 0;">
+
+    <h3 class="section-h3" id="llm-why" data-collapse="llm-why-content">
+      <span class="chv">&#9660;</span> 选型与动机
+    </h3>
+    <div class="collapsible-content" id="llm-why-content">
+      <div class="card">
+        <p>基座模型直接用的问题：工具调用不稳定、输出格式不规范、法律风格太口语化、指令遵循弱。<strong>prompt engineering 改不动</strong>，需要 SFT。</p>
+        <p>选 <strong>Qwen3.5-9B</strong>：双卡（2&times;24GB）可训练、原生思考链、Tool calling 基础好——微调只需"对齐"不需"从零学"。Llama 3 需中文增训，Qwen2.5-7B tool calling 基础弱，32B 训练成本太高。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="llm-train" data-collapse="llm-train-content">
+      <span class="chv">&#9660;</span> 训练细节
+    </h3>
+    <div class="collapsible-content" id="llm-train-content">
+      <div class="card">
+        <p><strong>LoRA 关键决策</strong>：r=16 时 JSON 格式准确率不够，提高到 <strong>r=64</strong> 后解决。target_modules 覆盖全部线性层（QKV + FFN）——工具调用决策涉及 attention，格式涉及 FFN，两边都要适配。lora_alpha=128，scaling=2，明显改变模型行为。</p>
+        <p><strong>踩坑：脏数据</strong> &mdash; 训练数据 tool_calls 格式五花八门（function 是 string、arguments 是 JSON 字符串、content 是 null）。三层防御：预处理统一格式、Dataset 初始化时试跑 tokenize 过滤坏样本、<code>__getitem__</code> catch 异常顺延取下一个。</p>
+        <p><strong>Loss Masking</strong>：只对 assistant 回复计算 loss，system/user/tool 全部 mask 为 -100。<code>gradient_checkpointing</code> 必须开——9B 不开双卡直接 OOM。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="llm-vllm" data-collapse="llm-vllm-content">
+      <span class="chv">&#9660;</span> vLLM 部署
+    </h3>
+    <div class="collapsible-content" id="llm-vllm-content">
+      <div class="card">
+        <p>关键参数：<code>--reasoning-parser qwen3</code>（思考链）、<code>--enable-auto-tool-choice</code> + <code>--tool-call-parser qwen3_coder</code>（工具调用）、<code>--enable-lora</code>（LoRA 热加载，请求时通过 model 字段指定 adapter）。</p>
+        <p><strong>无 GPU 回退</strong>：整个 Agent 通过 <code>ChatOpenAI</code> 调 LLM，改环境变量 base_url/api_key/GEN_MODEL 即可切换到 OpenAI API，功能完全一样。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 四、工程化 ========== -->
+  <hr class="section-divider">
+  <h2 class="section-h2" id="eng" data-collapse="eng-content">
+    <span class="chv">&#9660;</span> 四、工程化落地
+  </h2>
+  <div class="collapsible-content module" id="eng-content">
+
+    <h3 class="section-h3" id="eng-memory" data-collapse="eng-memory-content">
+      <span class="chv">&#9660;</span> 记忆与压缩
+    </h3>
+    <div class="collapsible-content" id="eng-memory-content">
+      <div class="card">
+        <p>法律咨询是长期过程，用户分多次提供案件信息，没有记忆每次得重述。设计了两层：<strong>长期记忆</strong>由 LLM 主动调 extract_memory 提取存入 PostgreSQL Store（跨会话）；<strong>短期记忆</strong>超 8 轮自动压缩早期对话为 JSON 摘要，用 RemoveMessage 删原始消息，保留最近 4 轮，用户无感。</p>
+        <p><strong>踩坑：记忆提取过度</strong> &mdash; LLM 把"你好""谢谢"都记录了。解决：prompt 和 Skills 指南加严格约束——只记录确定事实和明确偏好。</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3" id="eng-deploy" data-collapse="eng-deploy-content">
+      <span class="chv">&#9660;</span> API 与部署
+    </h3>
+    <div class="collapsible-content" id="eng-deploy-content">
+      <div class="card">
+        <p><strong>SSE 流式 API</strong>：选 OpenAI Chat Completions 兼容格式，事实标准，前端库和 SDK 都支持。Agent 用 FastAPI lifespan 管理单例。</p>
+        <p><strong>踩坑：JSON 转义</strong> &mdash; SSE 嵌套 JSON 忘转义换行符，前端 JSON.parse 报错。</p>
+        <p><strong>踩坑：流式错误</strong> &mdash; Agent 内部报错不能断连接，要通过 SSE 发错误消息。</p>
+        <p><strong>Docker Compose</strong>：依赖链 postgres &rarr; agent-api &rarr; ui，健康检查驱动。vLLM 独立启动（模型加载慢）。</p>
+        <p><strong>踩坑：agent_base_url</strong> &mdash; 是浏览器访问地址，不是容器内部地址，写成 Docker hostname 浏览器解析不了。</p>
+        <p><strong>容错降级</strong>：PostgreSQL 挂了回退 InMemorySaver，vLLM 没启动改 base_url 到 OpenAI API，Retriever 未注入返回提示不 crash。目标是<strong>可以只启动部分服务做开发调试</strong>。</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="回到顶部">&#8593;</button>
+
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11"></script>
+<script>
+(function () {
+  hljs.highlightAll();
+
+  function setupCollapsible(sel) {
+    document.querySelectorAll(sel).forEach(function (h) {
+      var tid = h.getAttribute("data-collapse");
+      if (!tid) return;
+      var t = document.getElementById(tid);
+      if (!t) return;
+      h.addEventListener("click", function () {
+        var collapsed = t.classList.toggle("collapsed");
+        h.classList.toggle("collapsed", collapsed);
+      });
+    });
+  }
+  setupCollapsible(".section-h2");
+  setupCollapsible(".section-h3");
+
+  var navLinks = document.querySelectorAll(".sidebar-nav a");
+  var sections = [];
+  navLinks.forEach(function (l) {
+    var h = l.getAttribute("href");
+    if (h && h.startsWith("#")) {
+      var el = document.getElementById(h.slice(1));
+      if (el) sections.push({ el: el, link: l });
+    }
+  });
+  var curActive = null;
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        var m = sections.find(function (s) { return s.el === e.target; });
+        if (m) {
+          if (curActive) curActive.classList.remove("active");
+          m.link.classList.add("active");
+          curActive = m.link;
+        }
+      }
+    });
+  }, { rootMargin: "-80px 0px -60% 0px" });
+  sections.forEach(function (s) { obs.observe(s.el); });
+
+  navLinks.forEach(function (l) {
+    l.addEventListener("click", function (e) {
+      e.preventDefault();
+      var t = document.querySelector(l.getAttribute("href"));
+      if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (window.innerWidth <= 860) {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      }
+    });
+  });
+
+  var btn = document.getElementById("backToTop");
+  window.addEventListener("scroll", function () {
+    btn.classList.toggle("visible", window.scrollY > 400);
+  });
+  btn.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+
+  var hb = document.getElementById("hamburger");
+  var sb = document.getElementById("sidebar");
+  var ov = document.getElementById("overlay");
+  hb.addEventListener("click", function () { sb.classList.toggle("open"); ov.classList.toggle("show"); });
+  ov.addEventListener("click", function () { sb.classList.remove("open"); ov.classList.remove("show"); });
+})();
+</script>
+</body>
+</html>
